@@ -1,6 +1,6 @@
 #pragma once
 
-/// An interface for objects that should receive updates on every Game tick.
+/// An interface for objects that should receive updates on every tick.
 class IUpdateable
 {
 public:
