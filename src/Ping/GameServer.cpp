@@ -6,7 +6,6 @@ GameServer::GameServer(void)
 	: syncRate(1/20.0f)
 	, timeUntilSync(syncRate)
 {
-	// Predefine the players the clients will control
 	client[0].player = &player[0];
 	client[1].player = &player[1];
 }
@@ -18,12 +17,14 @@ bool GameServer::initialize()
 		sf::IpAddress::getLocalAddress() << ":44000" << std::endl;
 
 	// Create a listener to wait for incoming connections on port 44000
-	if (serverSocket.listen(44000) != sf::Socket::Done)
-		return false;
+    if (serverSocket.listen(44000) != sf::Socket::Done) {
+        return false;
+    }
 
 	// Wait for client connections
-	if (!waitForClients())
-		return false;
+    if (!waitForClients()) {
+        return false;
+    }
 
 	// Don't block when checking for data from now on
 	client[0].socket.setBlocking(false);
@@ -48,35 +49,28 @@ void GameServer::update(float deltaTime)
 {
 	pollMessages();
 
-	if (state == GameState::Playing)
-	{
+	if (state == GameState::Playing) {
 		stage.update(deltaTime);
 	}
-	else if (state == GameState::Preparatory)
-	{
-		if (countdown <= 0)
-		{
+	else if (state == GameState::Preparatory) {
+		if (countdown <= 0) {
 			// Release the ball and notify clients
 			sf::Packet p;
-			p << Message::BallReleased;
-			p << stage.ball.angle;
+			p << Message::BallReleased << stage.ball.angle;
 			sendMessage(p);
 			state = GameState::Playing;
 			stage.start();
 		}
-		else
-		{
+		else {
 			countdown -= deltaTime;
 		}
 	}
 
 	timeUntilSync -= deltaTime;
-	if (timeUntilSync <= 0)
-	{
+	if (timeUntilSync <= 0) {
 		// Send the clients a snapshot of the game
 		sf::Packet p;
-		p << Message::GameSync;
-		p << GameSnapshot(this);
+		p << Message::GameSync << GameSnapshot(this);
 		sendMessage(p);
 		timeUntilSync = syncRate;
 	}
@@ -88,8 +82,7 @@ void GameServer::ballHitTop()
 	// Increase score and notify players
 	player[1].score++;
 	sf::Packet p;
-	p << Message::PlayerScored;
-	p << 1;
+	p << Message::PlayerScored << 1;
 	sendMessage(p);
 
 	// Reset the stage
@@ -105,8 +98,7 @@ void GameServer::ballHitBottom()
 	// Increase score and notify players
 	player[0].score++;
 	sf::Packet p;
-	p << Message::PlayerScored;
-	p << 0;
+	p << Message::PlayerScored << 0;
 	sendMessage(p);
 
 	// Reset the stage
@@ -121,11 +113,8 @@ bool GameServer::waitForClients()
 	state = GameState::WaitingForClients;
 
 	// We want 2 clients
-	for (int i = 0; i < 2; i++)
-	{
-		// Check to see if the socket has received data
-		if (serverSocket.accept(client[i].socket) == sf::Socket::Done)
-		{
+	for (int i = 0; i < 2; i++) {
+		if (serverSocket.accept(client[i].socket) == sf::Socket::Done) {
 			sf::IpAddress remoteIp = client[i].socket.getRemoteAddress();
 			std::cout << "Client " << i << " connected from " << remoteIp << std::endl;
 
@@ -135,8 +124,7 @@ bool GameServer::waitForClients()
 			p << i;							// Inform the client of their index
 			client[i].socket.send(p);
 		}
-		else
-		{
+		else {
 			std::cout << "Connection error." << std::endl;
 			return false;
 		}
@@ -154,22 +142,21 @@ void GameServer::sendMessage(sf::Packet &p)
 
 void GameServer::pollMessages()
 {
-	for (int i = 0; i < 2; i++)
-	{
+	for (int i = 0; i < 2; i++) {
 		// The client has sent some data, we can receive it
 		int type;
 		sf::Packet packet;
 		int status = client[i].socket.receive(packet);
-		if (sf::Socket::Done == status)
-		{
+		if (sf::Socket::Done == status) {
 			packet >> type;
-			if (type == Message::PlayerMoveLeft)
-				packet >> client[i].player->paddle->moveLeft;
-			if (type == Message::PlayerMoveRight)
-				packet >> client[i].player->paddle->moveRight;
+            if (type == Message::PlayerMoveLeft) {
+                packet >> client[i].player->paddle->moveLeft;
+            }
+            if (type == Message::PlayerMoveRight) {
+                packet >> client[i].player->paddle->moveRight;
+            }
 		}
-		else if (sf::Socket::Disconnected == status)
-		{
+		else if (sf::Socket::Disconnected == status) {
 			// Exit
 			client[i].socket.disconnect();
 			state = GameState::Shutdown;

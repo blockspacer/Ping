@@ -4,17 +4,15 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <memory>
 
 int main()
 {
-    std::srand(static_cast<unsigned int>(std::time(NULL)));
-
 	std::string input;
 	bool validOption = false;
-	Game *game;
+	std::unique_ptr<Game> game;
 
-	while (!validOption)
-	{
+	while (!validOption) {
 		std::cout
 			<< "------------------------------" << std::endl
 			<< "             PING             " << std::endl
@@ -22,27 +20,23 @@ int main()
 			<< "[s]erver  [c]lient  [q]uit : ";
 		std::cin >> input;
 
-		if (input[0] == 's' || input[0] == 'S')
-		{
+		if (input[0] == 's' || input[0] == 'S') {
 			validOption = true;
-			game = new GameServer;
+			game = std::make_unique<GameServer>();
 		}
-		else if (input[0] == 'c' || input[0] == 'C')
-		{
+		else if (input[0] == 'c' || input[0] == 'C') {
 			validOption = true;
-			game = new GameClient;
+            game = std::make_unique<GameClient>();
 			std::cout << "Connect to address: ";
 			std::cin >> input;
-			((GameClient*)game)->setServerAddr(input.c_str());
+            dynamic_cast<GameClient*>(game.get())->setServerAddr(input.c_str());
 		}
-		else if (input[0] == 'q' || input[0] == 'Q')
-		{
+		else if (input[0] == 'q' || input[0] == 'Q') {
 			return EXIT_SUCCESS;
 		}
 	}
 	
 	game->run();
 
-	delete game;
     return EXIT_SUCCESS;
 }

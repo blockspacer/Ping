@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdlib>
 #include <cmath>
+#include <random>
 #include <SFML/System/Vector2.hpp>
 typedef sf::Vector2f Vector2;
 
@@ -59,7 +60,9 @@ namespace PingMath
 	/// @return	The random number generated.
 	inline float random(float min, float max)
 	{
-		return min + (float)rand() / ((float)RAND_MAX/(max-min));
+        static std::minstd_rand engine(std::random_device{}());
+        std::uniform_real_distribution<float> dist(min, max);
+		return dist(engine);
 	}
 
 	/// Normalizes the given Vector to a unit vector.
@@ -68,8 +71,7 @@ namespace PingMath
 	inline float normalize(Vector2 &v)
 	{
 		float length = sqrt(v.x * v.x + v.y * v.y);
-		if (length < 0.0001)
-		{
+		if (length < 0.0001) {
 			return 0.0f;
 		}
 		float invLength = 1.0f / length;

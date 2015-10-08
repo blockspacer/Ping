@@ -23,11 +23,11 @@ public:
 	~GameServer(void);
 	
 	// Interface
-	virtual bool initialize();
-	virtual void shutdown();
-	virtual void update(float deltaTime);
-	virtual void ballHitTop();
-	virtual void ballHitBottom();
+    virtual bool initialize() override;
+    virtual void shutdown() override;
+    virtual void update(float deltaTime) override;
+    virtual void ballHitTop() override;
+    virtual void ballHitBottom() override;
 
 	/// Sends a packet to both of the clients.
 	/// @param [in]	p	The Packet to send.

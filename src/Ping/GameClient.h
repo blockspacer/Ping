@@ -20,10 +20,10 @@ public:
 	~GameClient(void);
 
 	// Interface
-	virtual bool initialize();
-	virtual void shutdown();
-	virtual void update(float deltaTime);
-	virtual void draw();
+	virtual bool initialize() override;
+    virtual void shutdown() override;
+    virtual void update(float deltaTime) override;
+    virtual void draw() override;
 	void setServerAddr(const char* addr) { serverAddr = sf::IpAddress(addr); }
 
 protected:

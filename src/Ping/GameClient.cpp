@@ -36,16 +36,14 @@ GameClient::GameClient(void)
 // Load font and connect to the server
 bool GameClient::initialize()
 {
-	if (!font.loadFromFile("arial.ttf"))
-	{
+	if (!font.loadFromFile("arial.ttf")) {
 		return false;
 	}
 
 	std::cout << "Connecting to " <<
 		serverAddr.toString() << "..." << std::endl;
 
-	if (server.connect(serverAddr, 44000) != sf::Socket::Done)
-	{
+	if (server.connect(serverAddr, 44000) != sf::Socket::Done) {
 		return false;
 	}
 	server.setBlocking(false);
@@ -71,23 +69,26 @@ void GameClient::update(float deltaTime)
 	// Client-side interpolation //
 	//===========================//
 	float alpha;
-	if (interpolate && state != GameState::Preparatory)
-		alpha = (localTime - psTime - 0.05f) / (ssTime - psTime);
-	else
-		alpha = 1.0f;
+    if (interpolate && state != GameState::Preparatory) {
+        alpha = (localTime - psTime - 0.05f) / (ssTime - psTime);
+    }
+    else {
+        alpha = 1.0f;
+    }
 
-	for (int i = 0; i < 2; i++)
-	{
-		if (i != playerIndex || !predict)
-			player[i].paddle->position = alpha*serverState.paddlePos[i] + (1-alpha)*prevServerState.paddlePos[i];
+	for (int i = 0; i < 2; i++) {
+        if (i != playerIndex || !predict) {
+            player[i].paddle->position = alpha*serverState.paddlePos[i] + (1-alpha)*prevServerState.paddlePos[i];
+        }
 	}
 	stage.ball.position = alpha*serverState.ballPos + (1-alpha)*prevServerState.ballPos;
 
 	//========================//
 	// Client-side prediction //
 	//========================//
-	if (predict)
-		stage.update(deltaTime);
+    if (predict) {
+        stage.update(deltaTime);
+    }
 }
 
 
@@ -117,56 +118,48 @@ void GameClient::handleInput()
 	sf::Event event;
 	window.pollEvent(event);
 	// Window closed or escape key pressed: exit
-	if ((event.type == sf::Event::Closed) || 
-		((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
-		state = GameState::Shutdown;
+    if ((event.type == sf::Event::Closed) ||
+        ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))) {
+        state = GameState::Shutdown;
+    }
 
 	// Toggle prediction
-	if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::P))
-	{
+	if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::P)) {
 		predict = !predict;
 		std::cout << "Client-side prediction: " << predict << std::endl;
 	}
 
 	// Toggle interpolation
-	if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::I))
-	{
+	if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::I)) {
 		interpolate = !interpolate;
 		std::cout << "Client-side interpolation: " << interpolate << std::endl;
 	}
 
 	// Move the player's paddle and send a message to the server
-	if (GameState::Playing == state)
-	{
+	if (GameState::Playing == state) {
 		sf::Packet p;
-		if (event.type == sf::Event::KeyPressed)
-		{
-			if (event.key.code == sf::Keyboard::Left)
-			{
+		if (event.type == sf::Event::KeyPressed) {
+			if (event.key.code == sf::Keyboard::Left) {
 				player[playerIndex].paddle->moveLeft = true;
 				p << Message::PlayerMoveLeft;
 				p << true;
 				server.send(p);
 			}
-			else if (event.key.code == sf::Keyboard::Right)
-			{
+			else if (event.key.code == sf::Keyboard::Right) {
 				player[playerIndex].paddle->moveRight = true;
 				p << Message::PlayerMoveRight;
 				p << true;
 				server.send(p);
 			}
 		}
-		else if (event.type == sf::Event::KeyReleased)
-		{
-			if (event.key.code == sf::Keyboard::Left)
-			{
+		else if (event.type == sf::Event::KeyReleased) {
+			if (event.key.code == sf::Keyboard::Left) {
 				player[playerIndex].paddle->moveLeft = false;
 				p << Message::PlayerMoveLeft;
 				p << false;
 				server.send(p);
 			}
-			else if (event.key.code == sf::Keyboard::Right)
-			{
+			else if (event.key.code == sf::Keyboard::Right) {
 				player[playerIndex].paddle->moveRight = false;
 				p << Message::PlayerMoveRight;
 				p << false;
@@ -183,25 +176,21 @@ void GameClient::pollMessages()
 	sf::Packet packet;
 	sf::Socket::Status status = server.receive(packet);
 	
-	if (status == sf::Socket::Done)
-	{
+	if (status == sf::Socket::Done) {
 		// Always expect the type first
 		packet >> type;
 
-		if (Message::ClientConnected == type)
-		{
+		if (Message::ClientConnected == type) {
 			packet >> playerIndex;	// Server assigns us a playerIndex
 			std::cout << "Connected as client " << playerIndex << std::endl
 				<< "Waiting for other clients..." << std::endl;
 			state = GameState::WaitingForClients;
 		}
-		else if (Message::GameStarted == type)
-		{
+		else if (Message::GameStarted == type) {
 			openDisplay();
 			state = GameState::Preparatory;
 		}
-		else if (Message::PlayerScored == type)
-		{
+		else if (Message::PlayerScored == type) {
 			int index;
 			packet >> index;
 			player[index].score++;
@@ -209,14 +198,12 @@ void GameClient::pollMessages()
 			state = GameState::Preparatory;
 			countdown = 3.0f;
 		}
-		else if (Message::BallReleased == type)
-		{
+		else if (Message::BallReleased == type) {
 			packet >> stage.ball.angle;
 			stage.start();
 			state = GameState::Playing;
 		}
-		else if (Message::GameSync == type)
-		{
+		else if (Message::GameSync == type) {
 			GameSnapshot gs;
 			packet >> gs;
 
@@ -226,8 +213,7 @@ void GameClient::pollMessages()
 			ssTime = localTime;
 		}
 	}
-	else if (status == sf::Socket::Disconnected)
-	{
+	else if (status == sf::Socket::Disconnected) {
 		std::cout << "Disconnected from server." << std::endl;
 		state = GameState::Shutdown;
 	}
@@ -236,7 +222,7 @@ void GameClient::pollMessages()
 
 void GameClient::openDisplay()
 {
-	int style	= sf::Style::Titlebar | sf::Style::Close;
+	int style = sf::Style::Titlebar | sf::Style::Close;
 	std::string title = "Ping";
 	window.create(
 		sf::VideoMode((unsigned int)stage.width, (unsigned int)stage.height),
@@ -249,8 +235,7 @@ void GameClient::openDisplay()
 
 void GameClient::drawCountdown()
 {
-	if (PingMath::between(countdown, 0.0f, 3.0f))
-	{
+	if (PingMath::between(countdown, 0.0f, 3.0f)) {
 		// Show whole number only
 		int number = (int)ceil(countdown);
 
@@ -262,6 +247,7 @@ void GameClient::drawCountdown()
 		text.setFont(font);
 		text.setCharacterSize(100);
 		text.setString(ss.str());
+
 		sf::FloatRect wh = text.getLocalBounds();
 		text.setPosition(stage.width/2.0f, stage.height/2.0f);
 		text.setOrigin(wh.width/2.0f, wh.height/2.0f);

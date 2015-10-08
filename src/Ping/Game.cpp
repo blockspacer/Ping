@@ -23,27 +23,27 @@ Game::~Game(void)
 
 void Game::run()
 {
-	// Only continue if initialization succeeded
-	if (!initialize())
-		state = GameState::Shutdown;
+    if (!initialize()) {
+        state = GameState::Shutdown;
+    }
 
 	// Fixed time-step
 	sf::Clock clock;
 	const float dt = 1.0f / 60.0f;
 	float accumulator = 0.0f;
 
-	while (GameState::Shutdown != state)
-	{
+	while (GameState::Shutdown != state) {
 		// Update the game then draw
 		float frameTime = clock.restart().asSeconds();
 
-		if (frameTime > 0.25f)
-			frameTime = 0.25f;
+        if (frameTime > 0.25f) {
+            frameTime = 0.25f;
+        }
 
 		accumulator += frameTime;
 		localTime += frameTime;
-		while (accumulator >= dt)
-		{
+
+		while (accumulator >= dt) {
 			update(dt);
 			accumulator -= dt;
 		}
@@ -51,9 +51,8 @@ void Game::run()
 		draw();
 
 		// Prevent CPU from killing itself
-		long timeLeft = 1000*dt - clock.restart().asMilliseconds();
-		if (timeLeft > 0)
-		{
+		long timeLeft = static_cast<long>(1000*dt - clock.restart().asMilliseconds());
+		if (timeLeft > 0) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(timeLeft));
 		}
 	}

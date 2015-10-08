@@ -25,8 +25,7 @@ public:
 /// Packet building instructions
 inline sf::Packet& operator <<(sf::Packet& Packet, const GameSnapshot& g)
 {
-	for (int i = 0; i < 2; i++)
-	{
+	for (int i = 0; i < 2; i++) {
 		Packet
 			<< g.paddlePos[i].x
 			<< g.paddlePos[i].y
@@ -38,8 +37,7 @@ inline sf::Packet& operator <<(sf::Packet& Packet, const GameSnapshot& g)
 /// Packet reading instructions
 inline sf::Packet& operator >>(sf::Packet& Packet, GameSnapshot& g)
 {
-	for (int i = 0; i < 2; i++)
-	{
+	for (int i = 0; i < 2; i++) {
 		Packet
 			>> g.paddlePos[i].x
 			>> g.paddlePos[i].y

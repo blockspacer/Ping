@@ -14,7 +14,7 @@ public:
 
 	Paddle(void);
 	~Paddle(void);
-	virtual void update(float deltaTime);
+    virtual void update(float deltaTime) override;
 
 private:
 	float accel;	///< Determines how quickly the paddle gains speed

@@ -13,6 +13,6 @@ public:
 
 	Ball(void);
 	~Ball(void);
-	virtual void update(float deltaTime);
+	virtual void update(float deltaTime) override;
 };
 

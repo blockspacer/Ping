@@ -19,20 +19,14 @@ Paddle::~Paddle(void)
 void Paddle::update(float deltaTime)
 {
 	// Decelerate
-	if (!(moveLeft || moveRight))
-	{
+	if (!(moveLeft || moveRight)) {
 		speed *= decel;
 	}
-	if (!(moveLeft && moveRight))
-	{
-		if (moveLeft)
-		{
-			//if (speed > 0) speed *= decel;
+	if (!(moveLeft && moveRight)) {
+		if (moveLeft) {
 			speed -= accel;
 		}
-		else if (moveRight)
-		{
-			//if (speed < 0) speed *= decel;
+		else if (moveRight) {
 			speed += accel;
 		}
 	}
