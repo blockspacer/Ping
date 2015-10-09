@@ -12,50 +12,50 @@
 class GameClient : public Game
 {
 public:
-	sf::RenderWindow window;	///< The window that will render the Stage
-	sf::IpAddress serverAddr;	///< The address of the server to connect to
-	sf::TcpSocket server;
+    sf::RenderWindow window;    ///< The window that will render the Stage
+    sf::IpAddress serverAddr;    ///< The address of the server to connect to
+    sf::TcpSocket server;
 
-	GameClient(void);
-	~GameClient(void);
+    GameClient(void);
+    ~GameClient(void);
 
-	// Interface
-	virtual bool initialize() override;
+    // Interface
+    virtual bool initialize() override;
     virtual void shutdown() override;
     virtual void update(float deltaTime) override;
     virtual void draw() override;
-	void setServerAddr(const char* addr) { serverAddr = sf::IpAddress(addr); }
+    void setServerAddr(const char* addr) { serverAddr = sf::IpAddress(addr); }
 
 protected:
-	int playerIndex;	///< Are we controlling player 0 or 1?
-	bool predict;		///< Should we use client-side prediction?
-	bool interpolate;	///< Should we use client-side interpolation?
+    int playerIndex;    ///< Are we controlling player 0 or 1?
+    bool predict;        ///< Should we use client-side prediction?
+    bool interpolate;    ///< Should we use client-side interpolation?
 
-	GameSnapshot serverState;		///< The most recent server snapshot
-	GameSnapshot prevServerState;	///< The previous server snapshot
-	float ssTime;					///< Local time of most recent snapshot
-	float psTime;					///< Local time of previous snapshot
+    GameSnapshot serverState;        ///< The most recent server snapshot
+    GameSnapshot prevServerState;    ///< The previous server snapshot
+    float ssTime;                    ///< Local time of most recent snapshot
+    float psTime;                    ///< Local time of previous snapshot
 
-	/// Handles the user keyboard input.
-	void handleInput();
+    /// Handles the user keyboard input.
+    void handleInput();
 
-	/// Check to see whether server has sent us any data
-	void pollMessages();
+    /// Check to see whether server has sent us any data
+    void pollMessages();
 
-	/// Initializes and opens the display window
-	void openDisplay();
+    /// Initializes and opens the display window
+    void openDisplay();
 
-	/// Draw the score to the display window
-	void drawScore();
+    /// Draw the score to the display window
+    void drawScore();
 
-	/// Draw countdown to the display window
-	void drawCountdown();
+    /// Draw countdown to the display window
+    void drawCountdown();
 
 private:
-	// Shapes for rendering the Stage to the screen
-	sf::RectangleShape topPaddle;
-	sf::RectangleShape bottomPaddle;
-	sf::CircleShape ball;
-	sf::Font font;
+    // Shapes for rendering the Stage to the screen
+    sf::RectangleShape topPaddle;
+    sf::RectangleShape bottomPaddle;
+    sf::CircleShape ball;
+    sf::Font font;
 };
 

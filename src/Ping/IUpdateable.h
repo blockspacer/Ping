@@ -5,7 +5,7 @@ class IUpdateable
 {
 public:
 
-	/// Update the object.
-	/// @param	deltaTime	Seconds since last update.
-	virtual void update(float deltaTime) = 0;
+    /// Update the object.
+    /// @param    deltaTime    Seconds since last update.
+    virtual void update(float deltaTime) = 0;
 };

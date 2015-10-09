@@ -6,8 +6,8 @@
 /// the server. The Client is made up of a Socket and Player.
 struct Client
 {
-	sf::TcpSocket socket;
-	Player *player;
+    sf::TcpSocket socket;
+    Player *player;
 };
 
 /// The GameServer accepts incoming GameClient connections and runs the Ping
@@ -16,31 +16,31 @@ struct Client
 class GameServer : public Game, public StageObserver
 {
 public:
-	Client client[2];
-	sf::TcpListener serverSocket;
+    Client client[2];
+    sf::TcpListener serverSocket;
 
-	GameServer(void);
-	~GameServer(void);
-	
-	// Interface
+    GameServer(void);
+    ~GameServer(void);
+    
+    // Interface
     virtual bool initialize() override;
     virtual void shutdown() override;
     virtual void update(float deltaTime) override;
     virtual void ballHitTop() override;
     virtual void ballHitBottom() override;
 
-	/// Sends a packet to both of the clients.
-	/// @param [in]	p	The Packet to send.
-	void sendMessage(sf::Packet &p);
+    /// Sends a packet to both of the clients.
+    /// @param [in]    p    The Packet to send.
+    void sendMessage(sf::Packet &p);
 
-	/// Check to see whether any network data has been received
-	void pollMessages();
+    /// Check to see whether any network data has been received
+    void pollMessages();
 
-	/// Wait for incoming client connections.
-	/// @return	true if two clients connect successfully, false otherwise.
-	bool waitForClients();
+    /// Wait for incoming client connections.
+    /// @return    true if two clients connect successfully, false otherwise.
+    bool waitForClients();
 
-	float syncRate;			///< Delay between sending game sync messages
-	float timeUntilSync;	///< Time left before sending game sync message
+    float syncRate;            ///< Delay between sending game sync messages
+    float timeUntilSync;    ///< Time left before sending game sync message
 };
 

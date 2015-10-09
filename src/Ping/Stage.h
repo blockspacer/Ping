@@ -8,11 +8,11 @@ class StageObserver
 {
 public:
 
-	/// Called when the Ball has hit the top of the Stage
-	virtual void ballHitTop() = 0;
+    /// Called when the Ball has hit the top of the Stage
+    virtual void ballHitTop() = 0;
 
-	/// Called when the Ball has hit the top of the Stage
-	virtual void ballHitBottom() = 0;
+    /// Called when the Ball has hit the top of the Stage
+    virtual void ballHitBottom() = 0;
 };
 
 
@@ -21,32 +21,32 @@ public:
 class Stage : public IUpdateable
 {
 public:
-	const float width;
-	const float height;
-	const Vector2 paddleSize;
-	const float ballRadius;
+    const float width;
+    const float height;
+    const Vector2 paddleSize;
+    const float ballRadius;
 
-	Paddle topPaddle;
-	Paddle bottomPaddle;
-	Ball ball;
+    Paddle topPaddle;
+    Paddle bottomPaddle;
+    Ball ball;
 
-	Stage(void);
-	~Stage(void);
-	virtual void update(float deltaTime);
+    Stage(void);
+    ~Stage(void);
+    virtual void update(float deltaTime);
 
-	/// Set the ball to being in play.
-	void start();
+    /// Set the ball to being in play.
+    void start();
 
-	/// Resets the ball and paddle positions and speeds. The ball is no longer
-	/// in play after calling this method.
-	void reset();
+    /// Resets the ball and paddle positions and speeds. The ball is no longer
+    /// in play after calling this method.
+    void reset();
 
-	/// Sets an observer.
-	/// @param [in]	o	The object that should receive notifications from this
-	/// 				stage.
-	void setObserver(StageObserver* o) { observer = o; }
+    /// Sets an observer.
+    /// @param [in]    o    The object that should receive notifications from this
+    ///                 stage.
+    void setObserver(StageObserver* o) { observer = o; }
 
 private:
-	StageObserver *observer;
+    StageObserver *observer;
 };
 
